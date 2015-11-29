@@ -11,6 +11,11 @@ use core\classes\models\Administrator;
 
 class Hooks extends Hook {
 	public function before_request() {
+		// Do not change if an admin is logged in
+		if ($this->request->getAuthentication()->administratorLoggedIn()) {
+			return;
+		}
+
 		$country = NULL;
 		$model     = new Model($this->config, $this->database);
 		if ($this->request->requestParam('set_country')) {
