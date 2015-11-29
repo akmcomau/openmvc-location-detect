@@ -18,10 +18,11 @@ class Hooks extends Hook {
 				'code' => $this->request->requestParam('set_country')
 			]);
 			$this->request->session->set('site_country', $country->code);
+			$this->logger->info("Setting Locale from Request: ".$country->code);
 		}
 		elseif ($this->request->session->get('site_country')) {
 			$country = $model->getModel('\core\classes\models\Country')->get([
-				'code' => $this->request->requestParam('set_country')
+				'code' => $this->request->session->get('site_country')
 			]);
 		}
 		else {
