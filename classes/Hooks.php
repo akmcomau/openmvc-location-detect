@@ -16,6 +16,8 @@ class Hooks extends Hook {
 			return;
 		}
 
+		$module_config = $this->config->moduleConfig('\modules\location_detect');
+
 		$country = NULL;
 		$model     = new Model($this->config, $this->database);
 		if ($this->request->requestParam('set_country')) {
@@ -36,6 +38,21 @@ class Hooks extends Hook {
 			$this->logger->info("Setting Locale from IP: $remote_ip => ".$country->code);
 		}
 
+		// Is the country valid
+		if ($country && $module_config->allowed_countries) {
+			if (!in_array($country->code, $module_config->allowed_countries)) {
+				$country = NULL;
+			}
+		}
+
+		// Is the currency valid
+		if ($country && $module_config->allowed_currencies) {
+			if (!in_array($country->currency, $module_config->allowed_currencies)) {
+				$country = NULL;
+			}
+		}
+
+		// set the locale
 		if ($country && $country->getLocale()) {
 			$this->config->setLocale($country->getLocale());
 			$this->logger->info('Setting Locale: '.$country->getLocale());
