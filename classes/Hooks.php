@@ -24,8 +24,10 @@ class Hooks extends Hook {
 			$country = $model->getModel('\core\classes\models\Country')->get([
 				'code' => $this->request->requestParam('set_country')
 			]);
-			$this->request->session->set('site_country', $country->code);
-			$this->logger->info("Setting Locale from Request: ".$country->code);
+			if ($country) {
+				$this->request->session->set('site_country', $country->code);
+				$this->logger->info("Setting Locale from Request: ".$country->code);
+			}
 		}
 		elseif ($this->request->session->get('site_country')) {
 			$country = $model->getModel('\core\classes\models\Country')->get([
@@ -35,7 +37,9 @@ class Hooks extends Hook {
 		else {
 			$remote_ip = $this->request->serverParam('REMOTE_ADDR');
 			$country   = $model->getModel('\modules\location_detect\classes\models\CountryIP4')->findCountry($remote_ip);
-			$this->logger->info("Setting Locale from IP: $remote_ip => ".$country->code);
+			if ($country) {
+				$this->logger->info("Setting Locale from IP: $remote_ip => ".$country->code);
+			}
 		}
 
 		// Is the country valid
