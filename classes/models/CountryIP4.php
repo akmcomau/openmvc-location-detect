@@ -65,10 +65,13 @@ class CountryIP4 extends Model {
 
 		// download and decompress
 		$contents = file_get_contents($url);
-		$contents = gzdecode($contents);
-		$lines    = explode("\n", $contents);
+		$tmp_filename = '/tmp/location_detect_db.gz';
+		file_put_contents($tmp_filename, $contents);
+		exec('gzip -d '.$tmp_filename);
 
-		foreach ($lines as $line) {
+		$tmp_file = fopen('/tmp/location_detect_db', 'r');
+		while (!feof($tmp_file)) {
+			$line = fgets($tmp_file);
 			$row = str_getcsv($line);
 			if (!preg_match('/:/', $row[0]) && isset($row[2])) {
 				if (isset($countries[$row[2]])) {
